@@ -46,25 +46,31 @@ int main() {
 
     printf("\nLISTADO DE TAREAS PENDIENTES:\n");
     MostrarTareas(pendientes);
+    Nodo *realizadas = CrearListaVacia();
 
+// muevo las tareas de una lista a la otra
+MoverTareas(&pendientes, &realizadas);
+
+//muestro como quedo la lista pendiente
+MostrarTareas(pendientes);
+
+//muestro la orta lista
+MostrarTareas(realizadas);
     return 0;
 }
-
+//creo el primer nodo vacio apuntado a null
 Nodo* CrearListaVacia() {
     return NULL;
 }
-
+// para insertar un nodo lo aputn star al nuevo nodo y a ese mismo lo apunto a star
 void InsertarNodo(Nodo **Start, Nodo *nuevoNodo) {
     nuevoNodo->Siguiente = *Start;
     *Start = nuevoNodo;
 }
-
+// aqui  creo un nodo tarea y le doy el malloc y uso buff para guardar la cadena
 Nodo* CrearTarea(int id) {
     Nodo *nueva = (Nodo *)malloc(sizeof(Nodo));
-    if (nueva == NULL) {
-        printf("Error al asignar memoria.\n");
-        exit(1);
-    }
+   
 
     nueva->T.TareaID = id;
 
@@ -90,5 +96,48 @@ void MostrarTareas(Nodo *Start) {
         printf("ID: %d - Descripcion: %s - Duracion: %d minutos\n",
                aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
         aux = aux->Siguiente;
+    }
+}
+
+
+
+// para mover las tareas de una lista a la otrea
+void MoverTareas(Nodo **pendientes, Nodo **realizadas) {
+    Nodo *actual = *pendientes;
+    Nodo *anterior = NULL;
+    int respuesta;
+
+    while (actual != NULL) {
+        printf("\nTarea ID: %d\n", actual->T.TareaID);
+        printf("Descripcion: %s\n", actual->T.Descripcion);
+        printf("Duracion: %d minutos\n", actual->T.Duracion);
+
+        printf("¿ Se realizo esta tarea? \n1: Si  \n0: No ");
+        fflush(stdin);
+        scanf("%d", &respuesta);
+
+        if (respuesta == 1) {
+            // Mover a lista de realizadas
+            Nodo *mover = actual;
+
+            // Actualizar la lista de pendientes
+            if (anterior == NULL) {
+                // El primer nodo fue realizado
+                *pendientes = actual->Siguiente;
+            } else {
+                anterior->Siguiente = actual->Siguiente;
+            }
+
+            // Insertar en realizadas
+            InsertarNodo(realizadas, mover);
+
+            // Avanzar al siguiente
+            actual = (anterior == NULL) ? *pendientes : anterior->Siguiente;
+        }
+        else {
+            // No se movió la tarea
+            anterior = actual;
+            actual = actual->Siguiente;
+        }
     }
 }
