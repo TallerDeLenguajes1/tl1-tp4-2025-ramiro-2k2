@@ -22,6 +22,9 @@ Nodo* CrearListaVacia();
 void InsertarNodo(Nodo **Start, Nodo *nuevoNodo);
 Nodo* CrearTarea(int id);
 void MostrarTareas(Nodo *Start);
+void MoverTareas(Nodo **pendientes, Nodo **realizadas);
+Nodo* BuscarPorID(Nodo *lista, int id);
+Nodo* BuscarPorPalabra(Nodo *lista, char *palabra);
 
 int main() {
     srand(time(NULL));
@@ -29,6 +32,9 @@ int main() {
     Nodo *pendientes = CrearListaVacia();
     int opcion;
     int idActual = 1000; // Comienza en 1000
+    int buscarID;
+char buscarPalabra[50];
+Nodo *resultado;
 
     printf("CARGA DE TAREAS:\n");
 
@@ -52,10 +58,55 @@ int main() {
 MoverTareas(&pendientes, &realizadas);
 
 //muestro como quedo la lista pendiente
+
+printf("Lista de Pendientes:\n");
 MostrarTareas(pendientes);
 
 //muestro la orta lista
+
+printf("Lista de realizadas:\n");
 MostrarTareas(realizadas);
+
+
+
+
+printf("Ingrese el ID que desea buscar:\n ");
+fflush(stdin);
+scanf("%d", &buscarID);
+
+// Buscar en pendientes
+resultado = BuscarPorID(pendientes, buscarID);
+if (resultado != NULL) {
+    printf("Tarea encontrada en pendientes: %s\n", resultado->T.Descripcion);
+} else {
+    // Buscar en realizadas
+    resultado = BuscarPorID(realizadas, buscarID);
+    if (resultado != NULL) {
+        printf("Tarea encontrada en realizadas: %s\n", resultado->T.Descripcion);
+    } else {
+        printf("Tarea no encontrada.\n");
+    }
+}
+
+printf("Ingrese palabra clave:\n ");
+fflush(stdin);
+gets(buscarPalabra);
+
+// Buscar en pendientes
+resultado = BuscarPorPalabra(pendientes, buscarPalabra);
+if (resultado != NULL) {
+    printf("Tarea encontrada en pendientes: %s\n", resultado->T.Descripcion);
+} else {
+    // Buscar en realizadas
+    resultado = BuscarPorPalabra(realizadas, buscarPalabra);
+    if (resultado != NULL) {
+        printf("Tarea encontrada en realizadas: %s\n", resultado->T.Descripcion);
+    } else {
+        printf("Tarea no encontrada.\n");
+    }
+}
+
+
     return 0;
 }
 //creo el primer nodo vacio apuntado a null
@@ -140,4 +191,29 @@ void MoverTareas(Nodo **pendientes, Nodo **realizadas) {
             actual = actual->Siguiente;
         }
     }
+}
+
+
+// busco
+Nodo* BuscarPorID(Nodo *lista, int id) {
+    Nodo *aux = lista;
+    while (aux != NULL) {
+        if (aux->T.TareaID == id) {
+            return aux;
+        }
+        aux = aux->Siguiente;
+    }
+    return NULL;
+}
+
+
+Nodo* BuscarPorPalabra(Nodo *lista, char *palabra) {
+    Nodo *aux = lista;
+    while (aux != NULL) {
+        if (strstr(aux->T.Descripcion, palabra) != NULL) {
+            return aux;
+        }
+        aux = aux->Siguiente;
+    }
+    return NULL;
 }
