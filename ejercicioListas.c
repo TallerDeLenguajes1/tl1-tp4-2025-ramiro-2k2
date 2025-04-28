@@ -25,6 +25,7 @@ void MostrarTareas(Nodo *Start);
 void MoverTareas(Nodo **pendientes, Nodo **realizadas);
 Nodo* BuscarPorID(Nodo *lista, int id);
 Nodo* BuscarPorPalabra(Nodo *lista, char *palabra);
+void LiberarLista(Nodo *lista);
 
 int main() {
     srand(time(NULL));
@@ -106,6 +107,9 @@ if (resultado != NULL) {
     }
 }
 
+
+LiberarLista(pendientes);
+LiberarLista(realizadas);
 
     return 0;
 }
@@ -216,4 +220,14 @@ Nodo* BuscarPorPalabra(Nodo *lista, char *palabra) {
         aux = aux->Siguiente;
     }
     return NULL;
+}
+
+void LiberarLista(Nodo *lista) {
+    Nodo *aux;
+    while (lista != NULL) {
+        aux = lista;
+        lista = lista->Siguiente;
+        free(aux->T.Descripcion); // liberar la descripción
+        free(aux);                // liberar el nodo
+    }
 }
